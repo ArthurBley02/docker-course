@@ -1,0 +1,75 @@
+services:
+# BASE DE DATOS
+  db:
+    image: mongo:6.0
+    container_name: ${MONGO_DB_NAME}
+    volumes:
+      - poke-vol:/data/db
+    # ports:
+    #   - 27017:27017
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+    command: ['--auth']
+  
+  # interfaz de usuario para la base de datos
+  mongo-express:
+    depends_on:
+      - db
+    image: mongo-express:1.0.0-alpha.4
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGO_USERNAME}
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGO_PASSWORD}
+      - ME_CONFIG_MONGODB_SERVER=${MONGO_DB_NAME}
+    ports:
+      - 8081:8081
+    restart: always
+  
+  # APP COMO TAL 
+  pokemon-app:
+    depends_on:
+      - db
+      - mongo-express
+    image: klerith/pokemon-nest-app:1.0.0
+    environment:
+      - MONGODB=mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_DB_NAME}:27017
+      - DB_NAME=${MONGO_DB_NAME}
+    ports:
+      - 3000:3000
+    restart: always
+    
+
+volumes:
+  poke-vol:
+    external: false
+
+
+
+
+
+
+
+
+
+
+
+
+
+# services
+## name service:
+### image : -> name image:tag/version
+### container_name: ->name cantainer
+### volumes:
+#### - name volumen/path local:path remoto (volumen remoto)
+### ports: -> opcional si sabes el puerto
+#### - 27017:27012 -> puerto local: puerto remoto
+### restart: always -> si se cae el contenedor volver a levantar
+### environment: -> variables de entorno -> cuando es lista - se coloca =, sin lista borra los - y coloca :
+#### - MONGO_INITDB_ROOT_USERNAME= valor -> usuario admin
+#### - MONGO_INITDB_ROOT_PASSWORD= valor -> contraseña admin  
+### command: ['--auth'] -> comando que se ejecuta cuando se monta la imagen
+
+#volumes:
+##poke-vol: -> name volumen
+### external: flase -> crea el volumen si no existe / true -> si existe el volumen no lo crea
