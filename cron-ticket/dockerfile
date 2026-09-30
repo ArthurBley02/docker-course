@@ -1,0 +1,12 @@
+FROM node:24.2-alpine
+WORKDIR /app
+COPY app.js package.json ./
+RUN npm install
+CMD ["node", "app.js"]
+
+
+# FROM name-image:tag  -> siempre se crea de una imagen previa 
+# WORKDIR /app -> crea un directorio de trabajo dentro del contenedor
+# COPY app.js package.json ./ -> copia los archivos de la carpeta local al contenedor (ultimo es el destino referenciado al WORKDIR)
+# RUN npm install -> instala las dependencias del proyecto
+# CMD ["node", "app.js"] -> comando que se ejecuta al iniciar el contenedor 
