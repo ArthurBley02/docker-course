@@ -2,6 +2,8 @@ FROM node:24.2-alpine
 WORKDIR /app
 COPY app.js package.json ./
 RUN npm install
+RUN rm -rf node_modules
+RUN npm install --prod
 CMD ["node", "app.js"]
 
 
@@ -9,4 +11,6 @@ CMD ["node", "app.js"]
 # WORKDIR /app -> crea un directorio de trabajo dentro del contenedor
 # COPY app.js package.json ./ -> copia los archivos de la carpeta local al contenedor (ultimo es el destino referenciado al WORKDIR)
 # RUN npm install -> instala las dependencias del proyecto
+# RUN rm -rf test && rm -rf node_modules -> elimina las carpetas de test y node_modules
+# RUN npm install --prod -> instala solo las dependencias de producción
 # CMD ["node", "app.js"] -> comando que se ejecuta al iniciar el contenedor 
